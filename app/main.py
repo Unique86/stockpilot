@@ -4,6 +4,17 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from app.routes.stocks import router
 
+import os
+from dotenv import load_dotenv
+
+from pathlib import Path
+from dotenv import load_dotenv
+
+env_path = Path(__file__).resolve().parent.parent / ".env"
+print(env_path)
+print(load_dotenv(env_path))
+print(os.getenv("FINNHUB_API_KEY"))
+
 print(">>> LOADING MAIN.PY <<<")
 
 app = FastAPI(title="StockPilot")
