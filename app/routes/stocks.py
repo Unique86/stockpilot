@@ -18,4 +18,13 @@ async def search(ticker: str):
     response = requests.get(url, params=params)
 
     data = response.json()
-    return data
+    return {
+        "ticker": ticker.upper(),
+        "price_change":  data.get("d"),
+         "percent_change": round(data.get("dp"), 2),
+        "current_price": data.get("c"),
+        "day_high": data.get("h"),
+        "day_low": data.get("l"),
+        "open_price": data.get("o"),
+        "previous_close": data.get("pc")
+    }
