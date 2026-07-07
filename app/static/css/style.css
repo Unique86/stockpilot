@@ -88,3 +88,9 @@ input {
 .negative {
     color: #ef4444;
 }
+.stock-card {
+    background: #1e293b;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #334155;
+}
