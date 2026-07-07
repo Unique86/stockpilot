@@ -3,30 +3,14 @@ console.log("app.js loaded");
 const searchButton = document.getElementById("searchButton")
 const tickerInput = document.getElementById("ticker")
 const stockResult = document.getElementById("stockResult");
+const watchlist = document.getElementById("watchlist");
 
-
-    
-
-searchButton.addEventListener("click", async function() {
-    console.log("Search button clicked!");
-    const symbol = tickerInput.value;
-    console.log("Ticker:", symbol);
-
-    stockResult.innerHTML = "<p>Loading stock data...</p>";
-
-    const response = await fetch("/search?ticker=" + symbol);
-    console.log("Response received");
-    
-    const data = await response.json();
-    console.log("Data:", data);
-    
-
-
-    
+function createStockCard(data) {
     const changeClass = data.price_change >= 0 ? "positive" : "negative";
     const changeArrow = data.price_change >= 0 ? "▲" : "▼";
-   stockResult.innerHTML = `
-   <div class="stock-card">
+
+    return `
+     <div class="stock-card">
 
     <div class="stock-header">
         <h3>${data.ticker}</h3>
@@ -61,9 +45,39 @@ searchButton.addEventListener("click", async function() {
         <span>Prev Close</span>
         <span>$${data.previous_close}</span>
     </div>
-
+   
   </div>
+       <button id="watchlistButton" class="watchlist-btn">
+    ⭐ Add to Watchlist
+        </button>
 
 </div>
 `;
+}
+    
+
+searchButton.addEventListener("click", async function() {
+    console.log("Search button clicked!");
+    const symbol = tickerInput.value.toUpperCase();
+    console.log("Ticker:", symbol);
+
+    stockResult.innerHTML = "<p>Loading stock data...</p>";
+
+    const response = await fetch("/search?ticker=" + symbol);
+    console.log("Response received");
+    
+    const data = await response.json();
+    console.log("Data:", data);
+    
+    stockResult.innerHTML = createStockCard(data);
+
+    const watchlistButton = document.querySelector(".watchlist-btn");
+
+watchlistButton.addEventListener("click", function () {
+    console.log("Adding to watchlist:", data.ticker);
+    watchlist.innerHTML += createStockCard(data);
+
+});
+
+
 });

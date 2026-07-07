@@ -123,3 +123,20 @@ input {
     font-weight: bold;
     color: white;
 }
+.watchlist-btn {
+    width: 100%;
+    margin-top: 25px;
+    padding: 14px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.watchlist-btn:hover {
+    background: #1d4ed8;
+}
