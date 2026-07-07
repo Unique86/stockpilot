@@ -16,8 +16,10 @@ async def search(ticker: str):
     url = "https://finnhub.io/api/v1/quote"
 
     response = requests.get(url, params=params)
+   
 
     data = response.json()
+    print(data)
     return {
         "ticker": ticker.upper(),
         "price_change":  data.get("d"),
