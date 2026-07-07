@@ -24,27 +24,45 @@ searchButton.addEventListener("click", async function() {
 
     
     const changeClass = data.price_change >= 0 ? "positive" : "negative";
-    stockResult.innerHTML = `
-    <div class="stock-card">
+    const changeArrow = data.price_change >= 0 ? "▲" : "▼";
+   stockResult.innerHTML = `
+   <div class="stock-card">
 
-    <h3>${data.ticker}</h3>
+    <div class="stock-header">
+        <h3>${data.ticker}</h3>
+    </div>
 
-    <p>Current Price: $${data.current_price}</p>
+    <div class="stock-price">
+        $${data.current_price}
+    </div>
 
-    <p class="${changeClass}">
-        <strong>Today's Change:</strong>
-        $${data.price_change}
-    </p>
+    <div class="stock-change ${changeClass}">
+        ${changeArrow} $${data.price_change} (${data.percent_change}%)
+    </div>
 
-    <p>Percent Change: ${data.percent_change}%</p>
+   <div class="stock-stats">
 
-    <p>Day High: $${data.day_high}</p>
+    <div class="stat-row">
+        <span>High</span>
+        <span>$${data.day_high}</span>
+    </div>
 
-    <p>Day Low: $${data.day_low}</p>
+    <div class="stat-row">
+        <span>Low</span>
+        <span>$${data.day_low}</span>
+    </div>
 
-    <p>Open: $${data.open_price}</p>
+    <div class="stat-row">
+        <span>Open</span>
+        <span>$${data.open_price}</span>
+    </div>
 
-    <p>Previous Close: $${data.previous_close}</p>
+    <div class="stat-row">
+        <span>Prev Close</span>
+        <span>$${data.previous_close}</span>
+    </div>
+
+  </div>
 
 </div>
 `;
