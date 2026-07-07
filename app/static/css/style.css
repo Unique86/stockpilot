@@ -81,3 +81,10 @@ input {
     margin: 8px 0;
     font-size: 18px;
 }
+.positive {
+    color: #22c55e;
+}
+
+.negative {
+    color: #ef4444;
+}
