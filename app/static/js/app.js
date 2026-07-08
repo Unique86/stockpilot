@@ -86,6 +86,11 @@ watchlistButton.addEventListener("click", function () {
     watchlistStocks.push(data);
     console.log(watchlistStocks)
 
+    localStorage.setItem(
+    "watchlist",
+    JSON.stringify(watchlistStocks)
+);
+
     watchlist.innerHTML += createStockCard(data);
 
 });
