@@ -6,6 +6,20 @@ const stockResult = document.getElementById("stockResult");
 const watchlist = document.getElementById("watchlist");
 const watchlistStocks = [];
 
+const savedWatchlist = localStorage.getItem("watchlist");
+const parsedWatchlist = JSON.parse(savedWatchlist);
+
+if (savedWatchlist){
+    watchlistStocks.push(...parsedWatchlist);
+    console.log(parsedWatchlist);
+
+    for (const stock of parsedWatchlist) {
+        watchlist.innerHTML += createStockCard(stock);
+}
+}
+
+
+
 function createStockCard(data) {
     const changeClass = data.price_change >= 0 ? "positive" : "negative";
     const changeArrow = data.price_change >= 0 ? "▲" : "▼";
