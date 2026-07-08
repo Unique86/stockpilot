@@ -1,3 +1,5 @@
+from urllib import response
+
 from fastapi import APIRouter
 import os
 import requests
@@ -16,6 +18,9 @@ async def search(ticker: str):
     url = "https://finnhub.io/api/v1/quote"
 
     response = requests.get(url, params=params)
+
+    print("Status:", response.status_code)
+    print("Body:", response.text)
    
     data = response.json()
     print(data)

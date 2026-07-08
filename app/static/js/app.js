@@ -4,6 +4,7 @@ const searchButton = document.getElementById("searchButton")
 const tickerInput = document.getElementById("ticker")
 const stockResult = document.getElementById("stockResult");
 const watchlist = document.getElementById("watchlist");
+const watchlistStocks = [];
 
 function createStockCard(data) {
     const changeClass = data.price_change >= 0 ? "positive" : "negative";
@@ -68,13 +69,18 @@ searchButton.addEventListener("click", async function() {
     
     const data = await response.json();
     console.log("Data:", data);
+    console.log("Ticker returned:", data.ticker);
     
     stockResult.innerHTML = createStockCard(data);
 
-    const watchlistButton = document.querySelector(".watchlist-btn");
+    const watchlistButton = stockResult.querySelector(".watchlist-btn");
 
 watchlistButton.addEventListener("click", function () {
     console.log("Adding to watchlist:", data.ticker);
+
+    watchlistStocks.push(data);
+    console.log(watchlistStocks)
+
     watchlist.innerHTML += createStockCard(data);
 
 });
