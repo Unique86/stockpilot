@@ -77,6 +77,11 @@ searchButton.addEventListener("click", async function() {
 
 watchlistButton.addEventListener("click", function () {
     console.log("Adding to watchlist:", data.ticker);
+    const existingStock = watchlistStocks.find(stock => stock.ticker === data.ticker);
+    if (existingStock) {
+    console.log("Stock is already in the watchlist.");
+    return;
+}
 
     watchlistStocks.push(data);
     console.log(watchlistStocks)
