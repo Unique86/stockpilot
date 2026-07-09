@@ -4,11 +4,21 @@ const searchButton = document.getElementById("searchButton")
 const tickerInput = document.getElementById("ticker")
 const stockResult = document.getElementById("stockResult");
 const watchlist = document.getElementById("watchlist");
+const refreshButton = document.getElementById("refresh-watchlist");
 console.log(watchlist);
 const watchlistStocks = [];
 
 const savedWatchlist = localStorage.getItem("watchlist");
 const parsedWatchlist = JSON.parse(savedWatchlist);
+
+
+async function getStockData(symbol) {
+    const response = await fetch("/search?ticker=" + symbol);
+    const data = await response.json();
+
+    return data;
+}
+
 
 if (savedWatchlist) {
     watchlistStocks.push(...parsedWatchlist);
@@ -161,10 +171,9 @@ searchButton.addEventListener("click", async function() {
 
     stockResult.innerHTML = "<p>Loading stock data...</p>";
 
-    const response = await fetch("/search?ticker=" + symbol);
+    const data = await getStockData(symbol);
     console.log("Response received");
     
-    const data = await response.json();
     console.log("Data:", data);
     console.log("Ticker returned:", data.ticker);
     
@@ -223,6 +232,29 @@ watchlist.addEventListener("click", function (event) {
     renderWatchlist();
    
   
+
+});
+
+refreshButton.addEventListener("click", async function () {
+    for (const stock of watchlistStocks) {
+       console.log("Old:", stock.current_price);
+
+       const data = await getStockData(stock.ticker);
+
+       console.log("New:", data.current_price); 
+       
+       Object.assign(stock, data);
+
+
+       console.log(data);
+    }
+
+    localStorage.setItem(
+    "watchlist",
+    JSON.stringify(watchlistStocks)
+);
+
+renderWatchlist();
 
 });
 
