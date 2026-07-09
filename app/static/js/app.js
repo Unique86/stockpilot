@@ -134,7 +134,18 @@ function createWatchlistCard(stock) {
 }
 
 function renderWatchlist() {
+    console.log("renderWatchlist length:", watchlistStocks.length);
       watchlist.innerHTML = "";
+
+      if (watchlistStocks.length === 0) {
+         watchlist.innerHTML = `
+        <p class="empty-watchlist">
+            ⭐ Your watchlist is empty.<br>
+            Search for a stock and click <strong>Add to Watchlist</strong>.
+        </p>
+    `;
+    return;
+}
 
       for (const stock of watchlistStocks) {
         watchlist.innerHTML += createWatchlistCard(stock);
@@ -207,8 +218,10 @@ watchlist.addEventListener("click", function (event) {
     "watchlist",
     JSON.stringify(watchlistStocks)
 );
-
+    console.log("After delete:", watchlistStocks);
+    console.log("Length:", watchlistStocks.length);
     renderWatchlist();
+   
   
 
 });
