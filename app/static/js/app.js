@@ -79,6 +79,12 @@ function createWatchlistCard(stock) {
 
     <div class="stock-header">
         <h3>${stock.ticker}</h3>
+
+        <button
+        class="remove-btn"
+          data-ticker="${stock.ticker}">
+        🗑 
+        </button>
     </div>
 
     <div class="stock-price">
@@ -91,32 +97,28 @@ function createWatchlistCard(stock) {
 
    <div class="stock-stats">
 
-    <div class="stat-row">
-        <span>High</span>
-        <span>$${stock.day_high}</span>
+    <div class="stat">
+        <span class="stat-label">High</span>
+        <span class="stat-value">$${stock.day_high}</span>
     </div>
 
-    <div class="stat-row">
-        <span>Low</span>
-        <span>$${stock.day_low}</span>
+    <div class="stat">
+        <span class="stat-label">Low</span>
+        <span class="stat-value">$${stock.day_low}</span>
     </div>
 
-    <div class="stat-row">
-        <span>Open</span>
-        <span>$${stock.open_price}</span>
+    <div class="stat">
+        <span class="stat-label">Open</span>
+        <span class="stat-value">$${stock.open_price}</span>
     </div>
 
-    <div class="stat-row">
-        <span>Prev Close</span>
-        <span>$${stock.previous_close}</span>
+    <div class="stat">
+        <span class="stat-label">Prev Close</span>
+        <span class="stat-value">$${stock.previous_close}</span>
     </div>
    
   </div>
-    <button
-        class="remove-btn"
-         data-ticker="${stock.ticker}">
-        🗑 Remove
-    </button>
+    
 
 </div>
 `;
@@ -160,7 +162,7 @@ watchlistButton.addEventListener("click", function () {
 }
 
     watchlistStocks.push(data);
-    console.log(watchlistStocks)
+    
 
     localStorage.setItem(
     "watchlist",
@@ -188,20 +190,18 @@ watchlist.addEventListener("click", function (event) {
     return stock.ticker !== ticker;
 });
 
-    console.log(updatedWatchlist);
+    
 
     watchlistStocks.length = 0;
     watchlistStocks.push(...updatedWatchlist);
-    
+
     localStorage.setItem(
     "watchlist",
     JSON.stringify(watchlistStocks)
 );
 
     renderWatchlist();
-    console.log(watchlistStocks);
-
-    console.log(ticker);
+  
 
 });
 

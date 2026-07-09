@@ -88,6 +88,7 @@ input {
 .negative {
     color: #ef4444;
 }
+
 .stock-card {
     background: #1e293b;
     border-radius: 12px;
@@ -106,20 +107,35 @@ input {
     margin-bottom: 20px;
 }
 .stock-stats {
-    display: inline-grid;
-    grid-template-columns: auto auto;
-    gap: 12px 30px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
     margin-top: 24px;
 }
-.stat-row {
-    display: contents;
+
+.stat {
+    text-align: center;
+}
+.stat-label,
+.stat-value {
+    display: block;
 }
 
-.stat-row span:first-child {
+.stat-label {
+    color: #94a3b8;
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    font-weight: bold;
+    font-size: 22px;
+}
+.stat span:first-child {
     color: #94a3b8;
 }
 
-.stat-row span:last-child {
+.stat span:last-child {
     font-weight: bold;
     color: white;
 }
@@ -139,4 +155,19 @@ input {
 
 .watchlist-btn:hover {
     background: #1d4ed8;
+}
+.stock-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+}
+.remove-btn {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: 20px;
+    cursor: pointer;
 }
