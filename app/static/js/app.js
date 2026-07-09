@@ -78,8 +78,15 @@ function createWatchlistCard(stock) {
      <div class="stock-card">
 
     <div class="stock-header">
+
+    <div class="stock-info">
         <h3>${stock.ticker}</h3>
 
+         <p class="company-name">
+            ${stock.company_name}
+        </p>
+
+    </div>
         <button
         class="remove-btn"
           data-ticker="${stock.ticker}">
@@ -94,6 +101,7 @@ function createWatchlistCard(stock) {
     <div class="stock-change ${changeClass}">
         ${changeArrow} $${stock.price_change} (${stock.percent_change}%)
     </div>
+   <hr class="stock-divider">
 
    <div class="stock-stats">
 
@@ -160,7 +168,7 @@ watchlistButton.addEventListener("click", function () {
     console.log("Stock is already in the watchlist.");
     return;
 }
-
+    console.log(data);
     watchlistStocks.push(data);
     
 
