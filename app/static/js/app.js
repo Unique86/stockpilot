@@ -4,23 +4,23 @@ const searchButton = document.getElementById("searchButton")
 const tickerInput = document.getElementById("ticker")
 const stockResult = document.getElementById("stockResult");
 const watchlist = document.getElementById("watchlist");
+console.log(watchlist);
 const watchlistStocks = [];
 
 const savedWatchlist = localStorage.getItem("watchlist");
 const parsedWatchlist = JSON.parse(savedWatchlist);
 
-if (savedWatchlist){
+if (savedWatchlist) {
     watchlistStocks.push(...parsedWatchlist);
     console.log(parsedWatchlist);
 
-    for (const stock of parsedWatchlist) {
-        watchlist.innerHTML += createStockCard(stock);
-}
+    renderWatchlist();
 }
 
 
 
-function createStockCard(data) {
+
+function createSearchCard(data) {
     const changeClass = data.price_change >= 0 ? "positive" : "negative";
     const changeArrow = data.price_change >= 0 ? "▲" : "▼";
 
@@ -69,7 +69,69 @@ function createStockCard(data) {
 </div>
 `;
 }
-    
+
+function createWatchlistCard(stock) {
+    const changeClass = stock.price_change >= 0 ? "positive" : "negative";
+    const changeArrow = stock.price_change >= 0 ? "▲" : "▼";
+
+    return `
+     <div class="stock-card">
+
+    <div class="stock-header">
+        <h3>${stock.ticker}</h3>
+    </div>
+
+    <div class="stock-price">
+        $${stock.current_price}
+    </div>
+
+    <div class="stock-change ${changeClass}">
+        ${changeArrow} $${stock.price_change} (${stock.percent_change}%)
+    </div>
+
+   <div class="stock-stats">
+
+    <div class="stat-row">
+        <span>High</span>
+        <span>$${stock.day_high}</span>
+    </div>
+
+    <div class="stat-row">
+        <span>Low</span>
+        <span>$${stock.day_low}</span>
+    </div>
+
+    <div class="stat-row">
+        <span>Open</span>
+        <span>$${stock.open_price}</span>
+    </div>
+
+    <div class="stat-row">
+        <span>Prev Close</span>
+        <span>$${stock.previous_close}</span>
+    </div>
+   
+  </div>
+    <button
+        class="remove-btn"
+         data-ticker="${stock.ticker}">
+        🗑 Remove
+    </button>
+
+</div>
+`;
+
+}
+
+function renderWatchlist() {
+      watchlist.innerHTML = "";
+
+      for (const stock of watchlistStocks) {
+        watchlist.innerHTML += createWatchlistCard(stock);
+
+}
+      
+}
 
 searchButton.addEventListener("click", async function() {
     console.log("Search button clicked!");
@@ -85,7 +147,7 @@ searchButton.addEventListener("click", async function() {
     console.log("Data:", data);
     console.log("Ticker returned:", data.ticker);
     
-    stockResult.innerHTML = createStockCard(data);
+    stockResult.innerHTML = createSearchCard(data);
 
     const watchlistButton = stockResult.querySelector(".watchlist-btn");
 
@@ -105,9 +167,42 @@ watchlistButton.addEventListener("click", function () {
     JSON.stringify(watchlistStocks)
 );
 
-    watchlist.innerHTML += createStockCard(data);
+    renderWatchlist();
 
 });
 
 
 });
+
+watchlist.addEventListener("click", function (event) {
+
+    if (!event.target.classList.contains("remove-btn")) {
+        return;
+    }
+
+    const ticker = event.target.dataset.ticker;
+    console.log("Before filter:", watchlistStocks);
+
+    const updatedWatchlist = watchlistStocks.filter(function (stock) {
+    console.log("Comparing:", stock.ticker, ticker);
+    return stock.ticker !== ticker;
+});
+
+    console.log(updatedWatchlist);
+
+    watchlistStocks.length = 0;
+    watchlistStocks.push(...updatedWatchlist);
+    
+    localStorage.setItem(
+    "watchlist",
+    JSON.stringify(watchlistStocks)
+);
+
+    renderWatchlist();
+    console.log(watchlistStocks);
+
+    console.log(ticker);
+
+});
+
+console.log("=== BOTTOM OF FILE ===");
