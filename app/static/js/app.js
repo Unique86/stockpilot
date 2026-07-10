@@ -5,7 +5,9 @@ const tickerInput = document.getElementById("ticker")
 const stockResult = document.getElementById("stockResult");
 const watchlist = document.getElementById("watchlist");
 const refreshButton = document.getElementById("refresh-watchlist");
+
 console.log(watchlist);
+console.log(Chart);
 const watchlistStocks = [];
 
 const savedWatchlist = localStorage.getItem("watchlist");
@@ -89,13 +91,13 @@ function createWatchlistCard(stock) {
 
     <div class="stock-header">
     <div class= "stock-company">
-    <div class="logo-container">
+    
         <img
          class="company-logo"
          src="${stock.logo}"
          alt="${stock.company_name} logo"
         >
-    </div>
+    
     <div class="stock-info">
         <h3>${stock.ticker}</h3>
 
@@ -266,5 +268,31 @@ refreshButton.addEventListener("click", async function () {
 renderWatchlist();
 
 });
+async function getHistory(symbol) {
+    const response = await fetch("/history?ticker=" + symbol);
+    const history = await response.json();
 
+    return history;
+}
+async function loadChart() {
+    const history = await getHistory("AAPL");
+    const chartCanvas = document.getElementById("stock-chart");
+    new Chart(chartCanvas, {
+    type: "line",
+
+    data: {
+        labels: history.labels,
+
+        datasets: [{
+            label: "Sample Stock Price",
+            data: history.prices
+        }]
+        
+    }
+    
+});
+    
+}
+
+loadChart();
 console.log("=== BOTTOM OF FILE ===");

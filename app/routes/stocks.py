@@ -1,9 +1,7 @@
-from urllib import response
-
 from fastapi import APIRouter
 import os
 import requests
-
+import time 
 
 router = APIRouter()
 
@@ -12,36 +10,61 @@ async def search(ticker: str):
     api_key = os.getenv("FINNHUB_API_KEY")
     params = {
         "symbol": ticker,
-        "token": api_key
+        "token": api_key,
     }
-
     url = "https://finnhub.io/api/v1/quote"
     profile_url = "https://finnhub.io/api/v1/stock/profile2"
 
     quote_response = requests.get(url, params=params)
+    profile_response = requests.get(profile_url, params=params)
 
-    print("Status:", quote_response.status_code)
-    print("Body:", quote_response.text)
-   
     quote_data = quote_response.json()
-    print(quote_data)
-    profile_response = requests.get(
-    profile_url,
-    params=params
-)
-
     profile_data = profile_response.json()
 
     return {
         "ticker": ticker.upper(),
         "company_name": profile_data.get("name"),
         "logo": profile_data.get("logo"),
-        "price_change":  quote_data.get("d"),
-         "percent_change": round(quote_data.get("dp"), 2),
+        "price_change": quote_data.get("d"),
+        "percent_change": round(quote_data.get("dp"), 2),
         "current_price": quote_data.get("c"),
         "day_high": quote_data.get("h"),
         "day_low": quote_data.get("l"),
         "open_price": quote_data.get("o"),
-        "previous_close": quote_data.get("pc")
-        
+        "previous_close": quote_data.get("pc"),
     }
+
+@router.get("/history")
+async def history(ticker: str):
+    api_key = os.getenv("ALPHA_VANTAGE_API_KEY")
+    print(api_key)
+
+    to = int(time.time())
+    from_time = to - (30 * 24 * 60 * 60)
+    params = {
+    "function": "TIME_SERIES_DAILY",
+    "symbol": ticker,
+    "apikey": api_key,
+}
+
+    url = "https://www.alphavantage.co/query"
+    
+
+    quote_response = requests.get(url, params=params)
+
+    quote_data = quote_response.json()
+    print(quote_data)
+
+    time_series = quote_data["Time Series (Daily)"]
+    print(time_series)
+    
+    labels = []
+    prices = []
+    for date in time_series:
+        labels.append(date)
+        day_data = time_series[date]
+        prices.append(float(day_data["4. close"]))
+        
+    print(labels)
+    print(prices)
+    return {"labels": labels, "prices": prices}
