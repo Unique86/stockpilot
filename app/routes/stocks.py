@@ -35,6 +35,7 @@ async def search(ticker: str):
     return {
         "ticker": ticker.upper(),
         "company_name": profile_data.get("name"),
+        "logo": profile_data.get("logo"),
         "price_change":  quote_data.get("d"),
          "percent_change": round(quote_data.get("dp"), 2),
         "current_price": quote_data.get("c"),

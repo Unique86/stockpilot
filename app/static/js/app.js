@@ -88,13 +88,20 @@ function createWatchlistCard(stock) {
      <div class="stock-card">
 
     <div class="stock-header">
-
+    <div class= "stock-company">
+        <img
+         class="company-logo"
+         src="${stock.logo}"
+         alt="${stock.company_name} logo"
+        >
+    
     <div class="stock-info">
         <h3>${stock.ticker}</h3>
 
          <p class="company-name">
             ${stock.company_name}
         </p>
+      </div>
 
     </div>
         <button
@@ -117,17 +124,17 @@ function createWatchlistCard(stock) {
 
     <div class="stat">
         <span class="stat-label">High</span>
-        <span class="stat-value">$${stock.day_high}</span>
+        <span class="stat-value">$${stock.day_high.toFixed(2)}</span>
     </div>
 
     <div class="stat">
         <span class="stat-label">Low</span>
-        <span class="stat-value">$${stock.day_low}</span>
+        <span class="stat-value">$${stock.day_low.toFixed(2)}</span>
     </div>
 
     <div class="stat">
         <span class="stat-label">Open</span>
-        <span class="stat-value">$${stock.open_price}</span>
+        <span class="stat-value">$${stock.open_price.toFixed(2)}</span>
     </div>
 
     <div class="stat">
@@ -172,6 +179,7 @@ searchButton.addEventListener("click", async function() {
     stockResult.innerHTML = "<p>Loading stock data...</p>";
 
     const data = await getStockData(symbol);
+    
     console.log("Response received");
     
     console.log("Data:", data);
@@ -242,7 +250,7 @@ refreshButton.addEventListener("click", async function () {
        const data = await getStockData(stock.ticker);
 
        console.log("New:", data.current_price); 
-       
+
        Object.assign(stock, data);
 
 
