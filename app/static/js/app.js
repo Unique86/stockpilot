@@ -89,12 +89,13 @@ function createWatchlistCard(stock) {
 
     <div class="stock-header">
     <div class= "stock-company">
+    <div class="logo-container">
         <img
          class="company-logo"
          src="${stock.logo}"
          alt="${stock.company_name} logo"
         >
-    
+    </div>
     <div class="stock-info">
         <h3>${stock.ticker}</h3>
 
