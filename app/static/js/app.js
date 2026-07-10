@@ -274,9 +274,14 @@ async function getHistory(symbol) {
 
     return history;
 }
+
 async function loadChart() {
     const history = await getHistory("AAPL");
+    const stockUp = history.prices[history.prices.length - 1] > history.prices[0];
+    const lineColor = stockUp ? "#22c55e" : "#ef4444";
     const chartCanvas = document.getElementById("stock-chart");
+
+    
     new Chart(chartCanvas, {
     type: "line",
 
@@ -285,13 +290,32 @@ async function loadChart() {
 
         datasets: [{
             label: "Sample Stock Price",
-            data: history.prices
+            data: history.prices,
+            borderColor: lineColor,
+            tension: 0.35,
+            pointRadius: 0,
         }]
         
+    },
+    options: {
+        plugins: {
+            legend: {
+                display: false,
+            },
+            scales: {
+                x: {
+                    ticks:{
+                        maxTicksLimit: 6,
+                    }
+                }
+            }
+        },
+
     }
     
 });
     
+
 }
 
 loadChart();
