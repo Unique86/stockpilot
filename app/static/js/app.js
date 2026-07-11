@@ -280,6 +280,11 @@ async function loadChart() {
     const stockUp = history.prices[history.prices.length - 1] > history.prices[0];
     const lineColor = stockUp ? "#22c55e" : "#ef4444";
     const chartCanvas = document.getElementById("stock-chart");
+    const ctx = chartCanvas.getContext("2d");
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    const fillColor = stockUp
+    ? "rgba(34,197,94,0.25)"
+    : "rgba(239,68,68,0.25)";
 
     
     new Chart(chartCanvas, {
@@ -292,6 +297,8 @@ async function loadChart() {
             label: "Sample Stock Price",
             data: history.prices,
             borderColor: lineColor,
+             backgroundColor: gradient,
+             fill: true,
             tension: 0.35,
             pointRadius: 0,
         }]

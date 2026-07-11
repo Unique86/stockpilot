@@ -36,7 +36,7 @@ async def search(ticker: str):
 
 @router.get("/history")
 async def history(ticker: str):
-    api_key = os.getenv("ALPHA_VANTAGE_API_KEY")
+    api_key = os.getenv("FMP_API_KEY")
     print(api_key)
 
     to = int(time.time())
@@ -47,23 +47,23 @@ async def history(ticker: str):
     "apikey": api_key,
 }
 
-    url = "https://www.alphavantage.co/query"
-    
+    url = f"https://financialmodelingprep.com/stable/historical-price-eod/full?symbol={ticker}&apikey={api_key}"
 
-    quote_response = requests.get(url, params=params)
+    quote_response = requests.get(url)
 
     quote_data = quote_response.json()
     print(quote_data)
 
-    time_series = quote_data["Time Series (Daily)"]
-    print(time_series)
+    if not quote_data:
+       return quote_data
+   
+    
     
     labels = []
     prices = []
-    for date in time_series:
-        labels.append(date)
-        day_data = time_series[date]
-        prices.append(float(day_data["4. close"]))
+    for day in quote_data:
+        labels.append(day['date'])
+        prices.append(day['close'])
         
     print(labels)
     print(prices)
