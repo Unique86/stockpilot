@@ -97,9 +97,6 @@ function createWatchlistCard(stock) {
          src="${stock.logo}"
          alt="${stock.company_name} logo"
         >
-    <canvas class="mini-chart"
-     data-ticker="${stock.ticker}">
-    </canvas>
 
     <div class="stock-info">
         <h3>${stock.ticker}</h3>
@@ -107,9 +104,13 @@ function createWatchlistCard(stock) {
          <p class="company-name">
             ${stock.company_name}
         </p>
+   
       </div>
 
     </div>
+    <canvas class="mini-chart"
+         data-ticker="${stock.ticker}">
+    </canvas>
         <button
         class="remove-btn"
           data-ticker="${stock.ticker}">
@@ -185,11 +186,37 @@ async function loadMiniCharts() {
     for (const canvas of miniCharts) {
         console.log(canvas);
         const ticker = canvas.dataset.ticker;
+        const stock = watchlistStocks.find(
+        stock => stock.ticker === ticker
+);
+        
         const response = await fetch(`/history?ticker=${ticker}`);
         const history = await response.json();
         console.log(history);
         const labels = history.labels
         const prices = history.prices
+        const firstPrice = prices[prices.length - 1];
+        const lastPrice = prices[0];
+        const isPositive = stock.price_change >= 0;
+        const chartColor = isPositive
+                 ? "rgb(34, 197, 94)"
+                 : "rgb(239, 68, 68)";
+        const ctx = canvas.getContext("2d");
+        const gradientColor = isPositive
+              ? "rgba(34, 197, 94, 0.20)"
+              :"rgba(239, 68, 68, 0.20)";
+        
+        console.log("Ticker:", ticker);
+        console.log("First:", firstPrice);
+        console.log("Last:", lastPrice);
+        console.log("Positive:", isPositive);
+
+       
+
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+
+        gradient.addColorStop(0, gradientColor);
+        gradient.addColorStop(1, "rgba(34, 197, 94, 0)");
 
     new Chart(canvas, {
         type: "line",
@@ -197,9 +224,35 @@ async function loadMiniCharts() {
             labels: labels,
             datasets: [{
                 data: prices,
+                tension: 0.4,
+                pointRadius: 0,
+                borderWidth: 2,
+                borderColor: chartColor,
+
+
+                backgroundColor: gradient,
+                fill: true,
             }]
         },
-        
+
+        options: {
+              responsive: false,
+              maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                },
+            
+            },
+            scales: {
+                 x: {
+                        display: false,
+                 },
+                 y: {
+                        display: false,
+                }
+             }
+        }        
     });
 
     console.log(labels);

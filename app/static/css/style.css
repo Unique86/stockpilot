@@ -218,3 +218,9 @@ input {
     color: #9ca3af;
     margin: 0;
 }
+.mini-chart {
+    width: 200px;
+    height: 70px;
+    flex-shrink: 0;
+    margin-left: auto;
+}
