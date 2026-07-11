@@ -97,7 +97,10 @@ function createWatchlistCard(stock) {
          src="${stock.logo}"
          alt="${stock.company_name} logo"
         >
-    
+    <canvas class="mini-chart"
+     data-ticker="${stock.ticker}">
+    </canvas>
+
     <div class="stock-info">
         <h3>${stock.ticker}</h3>
 
@@ -171,7 +174,40 @@ function renderWatchlist() {
         watchlist.innerHTML += createWatchlistCard(stock);
 
 }
-      
+      loadMiniCharts();
+}
+
+async function loadMiniCharts() {
+    console.log("loadMiniCharts() started");
+    const miniCharts = document.querySelectorAll(".mini-chart");
+    console.log(miniCharts.length);
+    
+    for (const canvas of miniCharts) {
+        console.log(canvas);
+        const ticker = canvas.dataset.ticker;
+        const response = await fetch(`/history?ticker=${ticker}`);
+        const history = await response.json();
+        console.log(history);
+        const labels = history.labels
+        const prices = history.prices
+
+    new Chart(canvas, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [{
+                data: prices,
+            }]
+        },
+        
+    });
+
+    console.log(labels);
+    console.log(prices);
+    console.log("Ticker:", ticker);
+    console.log(canvas.dataset.ticker);
+}
+    console.log(miniCharts);
 }
 
 searchButton.addEventListener("click", async function() {
