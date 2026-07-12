@@ -151,7 +151,27 @@ function createWatchlistCard(stock, isExpanded) {
     </div>
    
   </div>
-    
+    ${isExpanded ? `
+   <div class="expanded-content">
+        
+    <div class="expanded-chart">
+       <canvas 
+       class="expanded-chart-canvas" data-ticker="${stock.ticker}">
+       </canvas>
+    </div>
+
+    <div class="chart-controls">
+
+        <button>1D</button>
+        <button>1W</button>
+        <button>1M</button>
+        <button>6M</button>
+        <button>1Y</button>
+
+        </div>
+
+     </div>
+` : ""}
 
 </div>
 `;
@@ -183,6 +203,7 @@ function renderWatchlist() {
 
 }
       loadMiniCharts();
+      loadExpandedChart();
 
 }
 
@@ -201,7 +222,15 @@ async function fetchHistory(ticker) {
     return await response.json();
 }
 
-function createMiniChart(canvas, labels, prices, chartColor, gradient) {
+function createChart(canvas, labels, prices, chartColor, gradient, options = {}) {
+
+         const {
+    mini = true,
+    showAxes = false,
+    showTooltip = false,
+    } = options;   
+
+
     new Chart(canvas, {
         type: "line",
         data: {
@@ -232,17 +261,20 @@ function createMiniChart(canvas, labels, prices, chartColor, gradient) {
 
             plugins: {
                 legend: {
-                    display: false,
+                    display: !mini,
+                },
+                tooltip: {
+                    enabled: showTooltip,
                 },
             
             },
 
             scales: {
                  x: {
-                        display: false,
+                        display: showAxes,
                  },
                  y: {
-                        display: false,
+                        display: showAxes,
                 }
              }
         }        
@@ -286,13 +318,20 @@ async function loadMiniCharts() {
 
         const gradient = createGradient(ctx, canvas, gradientColor);
 
-   createMiniChart(
+   createChart(
     canvas,
     labels,
     prices,
     chartColor,
-    gradient
+    gradient,
+
+      {
+        mini: true,
+        showAxes: false,
+        showTooltip: false
+    }
 );
+
 
     // console.log(labels);
     // console.log(prices);
@@ -300,6 +339,49 @@ async function loadMiniCharts() {
     // console.log(canvas.dataset.ticker);
 }
     // console.log(miniCharts);
+}
+
+async function loadExpandedChart() {
+    const canvas = document.querySelector(".expanded-chart-canvas");
+
+    if (!canvas) {
+        return;
+    }
+    const ticker = canvas.dataset.ticker;
+
+    const history = await fetchHistory(ticker);
+
+    const labels = history.labels;
+    const prices = history.prices;
+
+    const stock = watchlistStocks.find(
+        stock => stock.ticker === ticker
+    );
+
+    const isPositive = stock.price_change >= 0;
+    const chartColor = isPositive
+        ? "rgb(34, 197, 94)"
+        : "rgb(239, 68, 68)";
+    
+    const gradientColor = isPositive
+        ? "rgba(34, 197, 94, 0.20)"
+        : "rgba(239, 68, 68, 0.20)";
+
+    const ctx = canvas.getContext("2d");
+    const gradient = createGradient(ctx, canvas, gradientColor);
+
+    createChart(
+        canvas,
+        labels,
+        prices,
+        chartColor,
+        gradient,
+        {
+            mini: false,
+            showAxes: true,
+            showTooltip: true
+        }
+    );
 }
 
 searchButton.addEventListener("click", async function() {
