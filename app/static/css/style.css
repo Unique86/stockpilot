@@ -235,3 +235,12 @@ input {
     border: 2px solid #3b82f6;
     min-height: 500px;
 }
+.expanded-chart {
+     height: 300px;
+    border: 1px dashed #555;
+    margin-top: 20px;
+}
+.expanded-chart-canvas {
+    width: 100%;
+    height: 100%;
+}

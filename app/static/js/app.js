@@ -109,10 +109,14 @@ function createWatchlistCard(stock, isExpanded) {
       </div>
 
     </div>
-    <canvas class="mini-chart"
+    ${!isExpanded ? `
+    <div class="mini-chart-container">
+    <canvas 
+         class="mini-chart"
          data-ticker="${stock.ticker}">
     </canvas>
-       
+     </div>
+    `: ""}
     </div>
      <button
         class="remove-btn"
@@ -256,12 +260,12 @@ function createChart(canvas, labels, prices, chartColor, gradient, options = {})
                  duration: 1200,
             },
 
-            responsive: false,
+            responsive: !mini,
               maintainAspectRatio: false,
 
             plugins: {
                 legend: {
-                    display: !mini,
+                    display: false,
                 },
                 tooltip: {
                     enabled: showTooltip,
