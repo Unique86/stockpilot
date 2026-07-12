@@ -224,3 +224,14 @@ input {
     flex-shrink: 0;
     margin-left: auto;
 }
+.stock-card.expanded {
+    border: 2px solid #3b82f6;
+    
+}
+.stock-card {
+    transition: min-height 0.3s ease;
+}
+.stock-card.expanded {
+    border: 2px solid #3b82f6;
+    min-height: 500px;
+}

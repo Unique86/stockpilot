@@ -5,6 +5,7 @@ const tickerInput = document.getElementById("ticker")
 const stockResult = document.getElementById("stockResult");
 const watchlist = document.getElementById("watchlist");
 const refreshButton = document.getElementById("refresh-watchlist");
+let expandedTicker = null;
 
 console.log(watchlist);
 console.log(Chart);
@@ -82,12 +83,12 @@ function createSearchCard(data) {
 `;
 }
 
-function createWatchlistCard(stock) {
+function createWatchlistCard(stock, isExpanded) {
     const changeClass = stock.price_change >= 0 ? "positive" : "negative";
     const changeArrow = stock.price_change >= 0 ? "▲" : "▼";
 
     return `
-     <div class="stock-card">
+     <div class="stock-card ${isExpanded ? "expanded" : ""}" data-ticker="${stock.ticker}">
 
     <div class="stock-header">
     <div class= "stock-company">
@@ -111,13 +112,13 @@ function createWatchlistCard(stock) {
     <canvas class="mini-chart"
          data-ticker="${stock.ticker}">
     </canvas>
-        <button
+       
+    </div>
+     <button
         class="remove-btn"
           data-ticker="${stock.ticker}">
         🗑 
-        </button>
-    </div>
-
+    </button>
     <div class="stock-price">
         $${stock.current_price}
     </div>
@@ -172,27 +173,96 @@ function renderWatchlist() {
 }
 
       for (const stock of watchlistStocks) {
-        watchlist.innerHTML += createWatchlistCard(stock);
+        const isExpanded = stock.ticker === expandedTicker;
+
+        console.log(stock.ticker, expandedTicker, isExpanded);
+
+        watchlist.innerHTML += createWatchlistCard(stock, isExpanded);
+        
+
 
 }
       loadMiniCharts();
+
+}
+
+function createGradient(ctx, canvas, gradientColor) {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+
+    gradient.addColorStop(0, gradientColor);
+    gradient.addColorStop(1, "rgba(34, 197, 94, 0)");
+      
+
+    return gradient;
+}
+
+async function fetchHistory(ticker) {
+    const response = await fetch(`/history?ticker=${ticker}`);
+    return await response.json();
+}
+
+function createMiniChart(canvas, labels, prices, chartColor, gradient) {
+    new Chart(canvas, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [{
+                data: prices,
+                tension: 0.4,
+                pointRadius: 0,
+                borderWidth: 2,
+                borderColor: chartColor,
+                backgroundColor: gradient,
+                fill: true,
+
+                
+                pointHoverRadius: 0,
+                borderCapStyle: "round",
+                borderJoinStyle: "round",
+            }]
+        },
+
+        options: {
+            animation: {
+                 duration: 1200,
+            },
+
+            responsive: false,
+              maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    display: false,
+                },
+            
+            },
+
+            scales: {
+                 x: {
+                        display: false,
+                 },
+                 y: {
+                        display: false,
+                }
+             }
+        }        
+    });
 }
 
 async function loadMiniCharts() {
-    console.log("loadMiniCharts() started");
+   // console.log("loadMiniCharts() started");
     const miniCharts = document.querySelectorAll(".mini-chart");
-    console.log(miniCharts.length);
+   // console.log(miniCharts.length);
     
     for (const canvas of miniCharts) {
-        console.log(canvas);
+       // console.log(canvas);
         const ticker = canvas.dataset.ticker;
         const stock = watchlistStocks.find(
         stock => stock.ticker === ticker
 );
         
-        const response = await fetch(`/history?ticker=${ticker}`);
-        const history = await response.json();
-        console.log(history);
+        const history = await fetchHistory(ticker);
+      //  console.log(history);
         const labels = history.labels
         const prices = history.prices
         const firstPrice = prices[prices.length - 1];
@@ -205,62 +275,31 @@ async function loadMiniCharts() {
         const gradientColor = isPositive
               ? "rgba(34, 197, 94, 0.20)"
               :"rgba(239, 68, 68, 0.20)";
+     
         
-        console.log("Ticker:", ticker);
-        console.log("First:", firstPrice);
-        console.log("Last:", lastPrice);
-        console.log("Positive:", isPositive);
+        // console.log("Ticker:", ticker);
+        // console.log("First:", firstPrice);
+        // console.log("Last:", lastPrice);
+        // console.log("Positive:", isPositive);
 
        
 
-        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        const gradient = createGradient(ctx, canvas, gradientColor);
 
-        gradient.addColorStop(0, gradientColor);
-        gradient.addColorStop(1, "rgba(34, 197, 94, 0)");
+   createMiniChart(
+    canvas,
+    labels,
+    prices,
+    chartColor,
+    gradient
+);
 
-    new Chart(canvas, {
-        type: "line",
-        data: {
-            labels: labels,
-            datasets: [{
-                data: prices,
-                tension: 0.4,
-                pointRadius: 0,
-                borderWidth: 2,
-                borderColor: chartColor,
-
-
-                backgroundColor: gradient,
-                fill: true,
-            }]
-        },
-
-        options: {
-              responsive: false,
-              maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false,
-                },
-            
-            },
-            scales: {
-                 x: {
-                        display: false,
-                 },
-                 y: {
-                        display: false,
-                }
-             }
-        }        
-    });
-
-    console.log(labels);
-    console.log(prices);
-    console.log("Ticker:", ticker);
-    console.log(canvas.dataset.ticker);
+    // console.log(labels);
+    // console.log(prices);
+    // console.log("Ticker:", ticker);
+    // console.log(canvas.dataset.ticker);
 }
-    console.log(miniCharts);
+    // console.log(miniCharts);
 }
 
 searchButton.addEventListener("click", async function() {
@@ -332,6 +371,28 @@ watchlist.addEventListener("click", function (event) {
     renderWatchlist();
    
   
+
+});
+
+watchlist.addEventListener("click", function (event) {
+
+    if (event.target.classList.contains("remove-btn")) {
+        return;
+    }
+
+    const card = event.target.closest(".stock-card");
+    if (!card) {
+        return;
+    }
+    const ticker = card.dataset.ticker;
+
+    if (expandedTicker === ticker) {
+        expandedTicker = null;
+       } else {
+       expandedTicker = ticker;
+      }
+
+    renderWatchlist();
 
 });
 
