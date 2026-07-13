@@ -6,6 +6,7 @@ const stockResult = document.getElementById("stockResult");
 const watchlist = document.getElementById("watchlist");
 const refreshButton = document.getElementById("refresh-watchlist");
 let expandedTicker = null;
+let expandedChart = null;
 
 console.log(watchlist);
 console.log(Chart);
@@ -165,12 +166,11 @@ function createWatchlistCard(stock, isExpanded) {
     </div>
 
     <div class="chart-controls">
-
-        <button>1D</button>
-        <button>1W</button>
-        <button>1M</button>
-        <button>6M</button>
-        <button>1Y</button>
+        <button class="timeframe-btn" data-timeframe="1D">1D</button>
+        <button class="timeframe-btn" data-timeframe="1W">1W</button>
+        <button class="timeframe-btn" data-timeframe="1M">1M</button>
+        <button class="timeframe-btn" data-timeframe="6M">6M</button>
+        <button class="timeframe-btn" data-timeframe="1Y">1Y</button>
 
         </div>
 
@@ -221,8 +221,10 @@ function createGradient(ctx, canvas, gradientColor) {
     return gradient;
 }
 
-async function fetchHistory(ticker) {
-    const response = await fetch(`/history?ticker=${ticker}`);
+async function fetchHistory(ticker, timeframe = "1M") {
+    const response = await fetch(
+        `/history?ticker=${ticker}&timeframe=${timeframe}`
+    );
     return await response.json();
 }
 
@@ -234,8 +236,12 @@ function createChart(canvas, labels, prices, chartColor, gradient, options = {})
     showTooltip = false,
     } = options;   
 
+    if (!mini && expandedChart) {
+    expandedChart.destroy();
+    }
 
-    new Chart(canvas, {
+
+    expandedChart = new Chart(canvas, {
         type: "line",
         data: {
             labels: labels,
@@ -353,7 +359,7 @@ async function loadExpandedChart() {
     }
     const ticker = canvas.dataset.ticker;
 
-    const history = await fetchHistory(ticker);
+    const history = await fetchHistory(ticker, "1M");
 
     const labels = history.labels;
     const prices = history.prices;
@@ -429,7 +435,54 @@ watchlistButton.addEventListener("click", function () {
 
 });
 
-watchlist.addEventListener("click", function (event) {
+watchlist.addEventListener("click", async function (event) {
+    if(event.target.classList.contains("timeframe-btn")) {
+        const timeframe = event.target.dataset.timeframe;
+       
+        const card = event.target.closest(".stock-card");
+        const ticker = card.dataset.ticker;
+       
+        const history = await fetchHistory(ticker, timeframe)
+
+        const labels = history.labels;
+        const prices = history.prices;
+
+        const stock = watchlistStocks.find(
+        stock => stock.ticker === ticker
+        );
+
+        const canvas = document.querySelector(".expanded-chart-canvas");
+
+        const isPositive = stock.price_change >= 0;
+
+        const chartColor = isPositive
+            ? "rgb(34, 197, 94)"
+            : "rgb(239, 68, 68)";
+
+        const gradientColor = isPositive
+            ? "rgba(34, 197, 94, 0.20)"
+            : "rgba(239, 68, 68, 0.20)";
+
+        const ctx = canvas.getContext("2d");
+        const gradient = createGradient(ctx, canvas, gradientColor);
+
+        
+        createChart(
+                    canvas,
+                    labels,
+                     prices,
+                    chartColor,
+                     gradient,
+                {
+                     mini: false,
+                     showAxes: true,
+                    showTooltip: true
+                 }
+            );
+
+
+        return;
+    }
 
     if (!event.target.classList.contains("remove-btn")) {
         return;
@@ -461,6 +514,12 @@ watchlist.addEventListener("click", function (event) {
 });
 
 watchlist.addEventListener("click", function (event) {
+    console.log("Expand listener fired");
+
+    if (event.target.classList.contains("timeframe-btn")) {
+    console.log("Ignoring timeframe click");
+    return;
+    }
 
     if (event.target.classList.contains("remove-btn")) {
         return;

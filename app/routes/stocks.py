@@ -35,7 +35,10 @@ async def search(ticker: str):
     }
 
 @router.get("/history")
-async def history(ticker: str):
+async def history(ticker: str, 
+                  timeframe: str ="1M"
+                  ):
+    
     api_key = os.getenv("FMP_API_KEY")
     print(api_key)
 
@@ -54,8 +57,28 @@ async def history(ticker: str):
     quote_data = quote_response.json()
     print(quote_data)
 
+    if not isinstance(quote_data, list):
+       return {
+                 "error": "Historical data is temporarily unavailable."
+    }
+
     if not quote_data:
        return quote_data
+    
+    if timeframe == "1D":
+         quote_data = quote_data[:2]
+
+    elif timeframe == "1W":
+        quote_data = quote_data[:7]
+
+    elif timeframe == "1M":
+        quote_data = quote_data[:30]
+
+    elif timeframe == "6M":
+        quote_data = quote_data[:180]
+
+    elif timeframe == "1Y":
+         quote_data = quote_data[:365]
    
     
     
@@ -64,7 +87,9 @@ async def history(ticker: str):
     for day in quote_data:
         labels.append(day['date'])
         prices.append(day['close'])
-        
+
+    print(quote_data)    
     print(labels)
     print(prices)
+    print(timeframe)
     return {"labels": labels, "prices": prices}
