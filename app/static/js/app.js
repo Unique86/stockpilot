@@ -7,6 +7,8 @@ const watchlist = document.getElementById("watchlist");
 const refreshButton = document.getElementById("refresh-watchlist");
 let expandedTicker = null;
 let expandedChart = null;
+let currentTicker = "AAPL";
+let heroChart = null;
 
 console.log(watchlist);
 console.log(Chart);
@@ -82,6 +84,7 @@ function createSearchCard(data) {
 
 </div>
 `;
+
 }
 
 function createWatchlistCard(stock, isExpanded) {
@@ -227,7 +230,18 @@ async function fetchHistory(ticker, timeframe = "1M") {
     );
     return await response.json();
 }
+// Third Brother 
+function getChartColors(isPositive) {
+         return {
+        lineColor: isPositive ? "#22c55e" : "#ef4444",
+       
+        gradientColor: isPositive
+            ? "rgba(34, 197, 94, 0.20)"
+            : "rgba(239, 68, 68, 0.20)"
+    };
+      };
 
+// Parent
 function createChart(canvas, labels, prices, chartColor, gradient, options = {}) {
 
          const {
@@ -290,7 +304,7 @@ function createChart(canvas, labels, prices, chartColor, gradient, options = {})
         }        
     });
 }
-
+// Mini Brother 
 async function loadMiniCharts() {
    // console.log("loadMiniCharts() started");
     const miniCharts = document.querySelectorAll(".mini-chart");
@@ -304,19 +318,19 @@ async function loadMiniCharts() {
 );
         
         const history = await fetchHistory(ticker);
+        if (history.error) {
+             console.log(history.error);
+                return;
+            }
       //  console.log(history);
         const labels = history.labels
         const prices = history.prices
         const firstPrice = prices[prices.length - 1];
         const lastPrice = prices[0];
         const isPositive = stock.price_change >= 0;
-        const chartColor = isPositive
-                 ? "rgb(34, 197, 94)"
-                 : "rgb(239, 68, 68)";
+        const chartColors = getChartColors(isPositive)
         const ctx = canvas.getContext("2d");
-        const gradientColor = isPositive
-              ? "rgba(34, 197, 94, 0.20)"
-              :"rgba(239, 68, 68, 0.20)";
+        
      
         
         // console.log("Ticker:", ticker);
@@ -326,13 +340,13 @@ async function loadMiniCharts() {
 
        
 
-        const gradient = createGradient(ctx, canvas, gradientColor);
+        const gradient = createGradient(ctx, canvas, chartColors.gradientColor);
 
    createChart(
     canvas,
     labels,
     prices,
-    chartColor,
+    chartColors.lineColor,
     gradient,
 
       {
@@ -350,7 +364,7 @@ async function loadMiniCharts() {
 }
     // console.log(miniCharts);
 }
-
+//Big Brother 
 async function loadExpandedChart() {
     const canvas = document.querySelector(".expanded-chart-canvas");
 
@@ -360,6 +374,10 @@ async function loadExpandedChart() {
     const ticker = canvas.dataset.ticker;
 
     const history = await fetchHistory(ticker, "1M");
+    if (history.error) {
+        alert(history.error);
+        return;
+      }
 
     const labels = history.labels;
     const prices = history.prices;
@@ -369,22 +387,17 @@ async function loadExpandedChart() {
     );
 
     const isPositive = stock.price_change >= 0;
-    const chartColor = isPositive
-        ? "rgb(34, 197, 94)"
-        : "rgb(239, 68, 68)";
+    const chartColors = getChartColors(isPositive)
     
-    const gradientColor = isPositive
-        ? "rgba(34, 197, 94, 0.20)"
-        : "rgba(239, 68, 68, 0.20)";
-
+    
     const ctx = canvas.getContext("2d");
-    const gradient = createGradient(ctx, canvas, gradientColor);
+    const gradient = createGradient(ctx, canvas, chartColors.gradientColor);
 
     createChart(
         canvas,
         labels,
         prices,
-        chartColor,
+        chartColors.lineColor,
         gradient,
         {
             mini: false,
@@ -409,6 +422,8 @@ searchButton.addEventListener("click", async function() {
     console.log("Ticker returned:", data.ticker);
     
     stockResult.innerHTML = createSearchCard(data);
+    currentTicker = data.ticker;
+    await loadChart();
 
     const watchlistButton = stockResult.querySelector(".watchlist-btn");
 
@@ -434,7 +449,7 @@ watchlistButton.addEventListener("click", function () {
 
 
 });
-
+//cousin 
 watchlist.addEventListener("click", async function (event) {
     if(event.target.classList.contains("timeframe-btn")) {
         const timeframe = event.target.dataset.timeframe;
@@ -443,6 +458,10 @@ watchlist.addEventListener("click", async function (event) {
         const ticker = card.dataset.ticker;
        
         const history = await fetchHistory(ticker, timeframe)
+        if (history.error) {
+           alert(history.error);
+            return;
+        }
 
         const labels = history.labels;
         const prices = history.prices;
@@ -455,23 +474,19 @@ watchlist.addEventListener("click", async function (event) {
 
         const isPositive = stock.price_change >= 0;
 
-        const chartColor = isPositive
-            ? "rgb(34, 197, 94)"
-            : "rgb(239, 68, 68)";
+        const chartColors = getChartColors(isPositive);
+            
 
-        const gradientColor = isPositive
-            ? "rgba(34, 197, 94, 0.20)"
-            : "rgba(239, 68, 68, 0.20)";
 
         const ctx = canvas.getContext("2d");
-        const gradient = createGradient(ctx, canvas, gradientColor);
+        const gradient = createGradient(ctx, canvas, chartColors.gradientColor);
 
         
         createChart(
                     canvas,
                     labels,
                      prices,
-                    chartColor,
+                    chartColors.lineColor,
                      gradient,
                 {
                      mini: false,
@@ -569,20 +584,34 @@ async function getHistory(symbol) {
 
     return history;
 }
-
+//Big Sister
 async function loadChart() {
-    const history = await getHistory("AAPL");
+
+    const history = await fetchHistory(currentTicker, "1M");
+
+     if (history.error) {
+    alert(history.error);
+        return;
+    }
+
+    console.log(history.prices);
+    console.log("First:", history.prices[0]);
+    console.log("Last:", history.prices[history.prices.length - 1]);
+
     const stockUp = history.prices[history.prices.length - 1] > history.prices[0];
-    const lineColor = stockUp ? "#22c55e" : "#ef4444";
+    const chartColors = getChartColors(stockUp);
     const chartCanvas = document.getElementById("stock-chart");
     const ctx = chartCanvas.getContext("2d");
-    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    const fillColor = stockUp
-    ? "rgba(34,197,94,0.25)"
-    : "rgba(239,68,68,0.25)";
-
+    const gradient = createGradient(
+                                     ctx,
+                                     chartCanvas,
+                                     chartColors.gradientColor
+                                    );       
+    if (heroChart) {
+    heroChart.destroy();
+    }          
     
-    new Chart(chartCanvas, {
+    heroChart = new Chart(chartCanvas, {
     type: "line",
 
     data: {
@@ -591,7 +620,7 @@ async function loadChart() {
         datasets: [{
             label: "Sample Stock Price",
             data: history.prices,
-            borderColor: lineColor,
+            borderColor: chartColors.lineColor,
              backgroundColor: gradient,
              fill: true,
             tension: 0.35,
@@ -613,10 +642,24 @@ async function loadChart() {
             }
         },
 
-    }
+    } 
     
-});
-    
+}); 
+      // V2 TODO:
+     // Migrate Big Sister to createChart() after
+    // Parent supports a dedicated hero chart mode.
+      /*  createChart(
+                    chartCanvas,
+                    history.labels,
+                    history.prices,
+                    chartColors.lineColor,
+                    gradient,
+                   {
+                    mini: false,
+                    showAxes: true,
+                    showTooltip: true
+                   }
+);*/
 
 }
 

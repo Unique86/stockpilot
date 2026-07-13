@@ -59,7 +59,11 @@ async def history(ticker: str,
 
     if not isinstance(quote_data, list):
        return {
-                 "error": "Historical data is temporarily unavailable."
+                 "error": quote_data.get(
+                     "Error Message", 
+                     "Historical data is temporarily unavailable."
+                     )
+                 
     }
 
     if not quote_data:
