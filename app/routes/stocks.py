@@ -97,3 +97,20 @@ async def history(ticker: str,
     print(prices)
     print(timeframe)
     return {"labels": labels, "prices": prices}
+
+@router.get("/news")
+def get_market_news():
+    api_key = os.getenv("FINNHUB_API_KEY")
+
+    url = "https://finnhub.io/api/v1/news"
+
+    params = {
+    "category": "general",
+    "token": api_key,
+        }
+    
+    response = requests.get(url, params=params)
+    news = response.json()
+
+    return news 
+

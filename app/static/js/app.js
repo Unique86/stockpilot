@@ -5,6 +5,7 @@ const tickerInput = document.getElementById("ticker")
 const stockResult = document.getElementById("stockResult");
 const watchlist = document.getElementById("watchlist");
 const refreshButton = document.getElementById("refresh-watchlist");
+const newsContainer = document.getElementById("news-container");
 let expandedTicker = null;
 let expandedChart = null;
 let currentTicker = "AAPL";
@@ -664,4 +665,62 @@ async function loadChart() {
 }
 
 loadChart();
+
+
+// fetch News
+async function fetchNews() {
+    const response = await fetch("/news");
+    const news = await response.json();
+    return news;
+
+}
+
+//News
+async function loadNews() {
+    
+    const news = await fetchNews();
+
+    renderNews(news);
+
+    console.log(news);
+
+}
+
+function renderNews(news) {
+    const firstFive = news.slice(0, 5);
+
+    let html = "";
+
+    firstFive.forEach(article => {
+     html += createNewsCard(article);
+    });
+
+    newsContainer.innerHTML = html;
+    console.log(html);
+
+     console.log(news.length);
+
+}
+
+function createNewsCard(article) {
+     return `
+        <div class="news-item">
+            <img src="${article.image}" alt="${article.headline}">
+            <h3>${article.headline}</h3>
+            <p>${article.source}</p>
+
+            <a href="${article.url}" target="_blank">
+                Read More →
+            </a>
+
+        </div>
+
+    `;
+        
+
+}
+
+loadNews();
+
+
 console.log("=== BOTTOM OF FILE ===");
