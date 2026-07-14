@@ -219,10 +219,15 @@ input {
     margin: 0;
 }
 .mini-chart {
-    width: 200px;
-    height: 70px;
+    width: 140px;
+    height: 60px;
     flex-shrink: 0;
     margin-left: auto;
+}
+.mini-chart-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }
 .stock-card.expanded {
     border: 2px solid #3b82f6;
