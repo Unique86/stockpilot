@@ -242,7 +242,39 @@ function getChartColors(isPositive) {
     };
       };
 
-// Parent
+function formatTimeAgo(timestamp) {
+    const now = Date.now();
+    const secondsAgo = Math.floor((now - (timestamp * 1000)) / 1000);
+    if (secondsAgo < 60) {
+    return "Just now";
+    }
+
+    const minutesAgo = Math.floor(secondsAgo / 60);
+
+    if (minutesAgo < 60) {
+        return `${minutesAgo} minute${minutesAgo === 1 ? "" : "s"} ago`;
+    }
+
+    const hoursAgo = Math.floor(minutesAgo / 60);
+
+    if (hoursAgo < 24) {
+         return `${hoursAgo} hour${hoursAgo === 1 ? "" : "s"} ago`;
+    }
+
+    const daysAgo = Math.floor(hoursAgo / 24);
+
+    if (daysAgo === 1) {
+        return "Yesterday";
+    }
+
+    if (daysAgo < 7) {
+        return `${daysAgo} days ago`;
+    }
+
+    return `${daysAgo} days ago`;
+}
+
+// Parent Chart Engine 
 function createChart(canvas, labels, prices, chartColor, gradient, options = {}) {
 
          const {
@@ -250,11 +282,11 @@ function createChart(canvas, labels, prices, chartColor, gradient, options = {})
     showAxes = false,
     showTooltip = false,
     } = options;   
+    const existingChart = Chart.getChart(canvas);
 
-    if (!mini && expandedChart) {
-    expandedChart.destroy();
+    if (existingChart) {
+        existingChart.destroy();
     }
-
 
     expandedChart = new Chart(canvas, {
         type: "line",
@@ -687,6 +719,7 @@ async function loadNews() {
 }
 
 function renderNews(news) {
+    console.log("renderNews started");
     const firstFive = news.slice(0, 5);
 
     let html = "";
@@ -698,8 +731,8 @@ function renderNews(news) {
     newsContainer.innerHTML = html;
     console.log(html);
 
-     console.log(news.length);
-
+    console.log(news.length);
+    console.log(news[0]);
 }
 
 function createNewsCard(article) {
@@ -708,6 +741,8 @@ function createNewsCard(article) {
             <img src="${article.image}" alt="${article.headline}">
             <h3>${article.headline}</h3>
             <p>${article.source}</p>
+            <p class="news-time">${formatTimeAgo(article.datetime)}</p>
+            <p class="news-summary">${article.summary}</p>
 
             <a href="${article.url}" target="_blank">
                 Read More →
