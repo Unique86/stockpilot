@@ -1,3 +1,6 @@
+/* ======================================================
+   GLOBAL
+====================================================== */
 body {
     background-color: #111827;
     color: white;
@@ -10,6 +13,7 @@ body {
     margin: 40px auto;
     padding: 20px;
 }
+
 h1 {
     font-size: 48px;
 }
@@ -17,20 +21,10 @@ h2 {
     margin-top: 0;
     font-size: 28px;
 }
-.stock-header h3 {
-    margin: 0;
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: 1px;
-}
-.card h2 {
-    color: #60a5fa;
-}
 p {
     font-size: 20px;
     color: #cbd5e1;
 }
-
 button {
     background: #2563eb;
     color: white;
@@ -41,20 +35,13 @@ button {
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
-
+.chart-controls button {
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    min-width: 50px;
+}
 button:hover {
     background: #1d4ed8;
-}
-.card {
-    background: #1e293b;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-
-    transition: transform 0.2s ease;
-
 }
 input {
     width: 100%;
@@ -66,10 +53,31 @@ input {
     font-size: 16px;
     box-sizing: border-box;
 }
+
+.card {
+    background: #1e293b;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+
+    transition: transform 0.2s ease;
+
+}
+
 .card:hover {
     transform: translateY(-3px);
    
 }
+
+.card h2 {
+    color: #60a5fa;
+}
+
+/* ======================================================
+   SEARCH
+====================================================== */
 .stock-result {
     margin-top: 20px;
     padding: 15px;
@@ -87,13 +95,26 @@ input {
     margin: 8px 0;
     font-size: 18px;
 }
-.positive {
-    color: #22c55e;
+.watchlist-btn {
+    width: 100%;
+    margin-top: 25px;
+    padding: 14px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+.watchlist-btn:hover {
+    background: #1d4ed8;
 }
 
-.negative {
-    color: #ef4444;
-}
+/* ======================================================
+   WATCHLIST
+====================================================== */
 
 .stock-card {
     background: #1e293b;
@@ -112,19 +133,55 @@ input {
     font-weight: bold;
     margin-bottom: 20px;
 }
+
+.stock-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+}
+
+.stock-header h3 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+.stock-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.stock-info h3 {
+    margin-bottom: 4px;
+}
+.stock-company {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.company-logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+.company-name {
+    font-size: 14px;
+    color: #9ca3af;
+    margin: 0;
+}
+.stock-divider {
+    border: none;
+    border-top: 1px solid #334155;
+    margin: 28px 0;
+}
 .stock-stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
     margin-top: 24px;
 }
-@media (max-width: 768px) {
-    .stock-stats {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-    }
-}
-
 .stat {
     text-align: center;
 }
@@ -143,49 +200,8 @@ input {
     font-weight: bold;
     font-size: 22px;
 }
-.stat span:first-child {
-    color: #94a3b8;
-}
 
-.stat span:last-child {
-    font-weight: bold;
-    color: white;
-}
-.watchlist-btn {
-    width: 100%;
-    margin-top: 25px;
-    padding: 14px;
-    background: #2563eb;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
 
-.watchlist-btn:hover {
-    background: #1d4ed8;
-}
-.stock-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-
-}
-@media (max-width: 768px) {
-    .stock-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-    }
-.stock-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
 .remove-btn {
     background: transparent;
     border: none;
@@ -193,24 +209,6 @@ input {
     margin: 0;
     font-size: 20px;
     cursor: pointer;
-}
-.stock-divider {
-    border: none;
-    border-top: 1px solid #334155;
-    margin: 28px 0;
-}
-.company-logo {
-    width: 48px;
-    height: 48px;
-    object-fit: contain;
-}
-.stock-company {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-.stock-info h3 {
-    margin-bottom: 4px;
 }
 .watchlist-header {
     display: flex;
@@ -225,11 +223,21 @@ input {
     font-size: 16px;
     
 }
-.company-name {
-    font-size: 14px;
-    color: #9ca3af;
-    margin: 0;
+.stat span:first-child {
+    color: #94a3b8;
 }
+
+.stat span:last-child {
+    font-weight: bold;
+    color: white;
+}
+
+.stock-card {
+    transition: min-height 0.3s ease;
+}
+/* ======================================================
+   CHARTS
+====================================================== */
 .mini-chart {
         width: 100%;
         max-width: 180px;
@@ -240,16 +248,13 @@ input {
         display: flex;
         justify-content: center;
     }
+    .stock-card.expanded {
+    border: 2px solid #3b82f6;
+    min-height: 500px;
+}
 .stock-card.expanded {
     border: 2px solid #3b82f6;
     
-}
-.stock-card {
-    transition: min-height 0.3s ease;
-}
-.stock-card.expanded {
-    border: 2px solid #3b82f6;
-    min-height: 500px;
 }
 .expanded-chart {
      height: 300px;
@@ -260,6 +265,22 @@ input {
     width: 100%;
     height: 100%;
 }
+.chart-controls {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+   
+}
+.timeframe-btn {
+    padding: 8px 12px;
+    font-size: 16px;
+    min-width: 55px;
+}
+
+/* ======================================================
+   MARKET NEWS
+====================================================== */
+
 .news-item {
     background: #0f172a;
     border: 1px solid #334155;
@@ -314,4 +335,35 @@ input {
     line-height: 1.5;
     color: #cbd5e1;
     margin: 12px 0;
+}
+
+/* ======================================================
+   UTILITIES
+====================================================== */
+.positive {
+    color: #22c55e;
+}
+
+.negative {
+    color: #ef4444;
+}
+
+/* ======================================================
+   MOBILE
+====================================================== */
+
+@media (max-width: 768px) {
+    .stock-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .stock-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
 }
