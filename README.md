@@ -1,5 +1,11 @@
 # 📈 StockPilot
 
+## 🎯 Why I Built StockPilot
+
+StockPilot was built to strengthen my full-stack development skills by creating a modern stock tracking application that combines live market data, interactive charts, responsive design, and REST API integration into a polished user experience.
+
+The goal was to build a project that demonstrates both backend and frontend development while following clean architecture, reusable code, and continuous refactoring throughout development.
+
 A modern **full-stack stock tracking application** built with **FastAPI**, **JavaScript**, and **Chart.js**.
 
 StockPilot allows users to search live market data, build a persistent watchlist, visualize historical stock performance, and stay informed with the latest financial news through a clean, responsive interface designed for both desktop and mobile.
