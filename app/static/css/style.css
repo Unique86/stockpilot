@@ -118,6 +118,12 @@ input {
     gap: 16px;
     margin-top: 24px;
 }
+@media (max-width: 768px) {
+    .stock-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
 
 .stat {
     text-align: center;
