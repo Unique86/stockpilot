@@ -175,6 +175,12 @@ input {
     width: 100%;
 
 }
+@media (max-width: 768px) {
+    .stock-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
 .stock-info {
     display: flex;
     flex-direction: column;
@@ -225,16 +231,15 @@ input {
     margin: 0;
 }
 .mini-chart {
-    width: 140px;
-    height: 60px;
-    flex-shrink: 0;
-    margin-left: auto;
-}
+        width: 100%;
+        max-width: 180px;
+        margin: 0;
+    }
 .mini-chart-container {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-}
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
 .stock-card.expanded {
     border: 2px solid #3b82f6;
     
