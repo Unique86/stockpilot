@@ -49,7 +49,29 @@ StockPilot allows users to search live market data, build a persistent watchlist
 
 ## 📸 Screenshots
 
-> Screenshots coming soon.
+## 📸 Screenshots
+
+### Dashboard
+
+![Dashboard](app/static/images/dashboard.png)
+
+---
+
+### Watchlist
+
+![Watchlist](app/static/images/watchlist.png)
+
+---
+
+### Search
+
+![Search](app/static/images/search.png)
+
+---
+
+### Market News
+
+![Market News](app/static/images/news.png)
 
 ---
 
@@ -114,6 +136,16 @@ Run the application:
 ```bash
 uvicorn app.main:app --reload
 ```
+
+## Challenges
+
+During development I solved several real-world engineering problems, including:
+
+- Integrating multiple financial APIs for live and historical market data
+- Refactoring large JavaScript files into reusable components
+- Building responsive layouts for desktop and mobile devices
+- Debugging WSL networking to enable testing across multiple devices
+- Solving browser caching issues during mobile development
 
 ---
 
